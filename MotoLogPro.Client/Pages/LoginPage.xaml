@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MotoLogPro.Client.ViewModels"
+             x:Class="MotoLogPro.Client.Pages.LoginPage"
+             Title="Accedi"
+             BackgroundColor="#1a1a1a">
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center">
+
+            <Image Source="dotnet_bot.png" 
+                   HeightRequest="150" 
+                   HorizontalOptions="Center" />
+
+            <Label Text="MotoLog Pro"
+                   TextColor="White"
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <Label Text="Il gestionale per la tua officina"
+                   TextColor="#aaaaaa"
+                   FontSize="16"
+                   HorizontalOptions="Center" 
+                   Margin="0,-10,0,0"/>
+
+            <Entry Placeholder="Email"
+                   Text="{Binding Email}"
+                   Keyboard="Email"
+                   TextColor="Black"
+                   PlaceholderColor="Gray"
+                   BackgroundColor="White" 
+                   HeightRequest="50" />
+
+            <Entry Placeholder="Password"
+                   Text="{Binding Password}"
+                   IsPassword="True"
+                   TextColor="Black"
+                   PlaceholderColor="Gray"
+                   BackgroundColor="White"
+                   HeightRequest="50" />
+
+            <Button Text="ENTRA IN OFFICINA"
+                    Command="{Binding LoginCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    BackgroundColor="#D32F2F"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    HeightRequest="55"
+                    CornerRadius="10" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Color="#D32F2F"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
