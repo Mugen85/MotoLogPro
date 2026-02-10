@@ -6,39 +6,37 @@
              Title="Accedi"
              BackgroundColor="#1a1a1a">
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center">
+        <VerticalStackLayout Spacing="15" Padding="20" VerticalOptions="Center">
 
             <Image Source="dotnet_bot.png" 
-                   HeightRequest="150" 
+                   HeightRequest="100" 
                    HorizontalOptions="Center" />
 
             <Label Text="MotoLog Pro"
                    TextColor="White"
-                   FontSize="32"
+                   FontSize="28" 
                    FontAttributes="Bold"
                    HorizontalOptions="Center" />
 
             <Label Text="Il gestionale per la tua officina"
                    TextColor="#aaaaaa"
-                   FontSize="16"
+                   FontSize="14"
                    HorizontalOptions="Center" 
-                   Margin="0,-10,0,0"/>
-
+                   Margin="0,-5,0,10"/>
             <Entry Placeholder="Email"
                    Text="{Binding Email}"
                    Keyboard="Email"
                    TextColor="Black"
                    PlaceholderColor="Gray"
                    BackgroundColor="White" 
-                   HeightRequest="50" />
-
+                   HeightRequest="45" />
             <Entry Placeholder="Password"
                    Text="{Binding Password}"
                    IsPassword="True"
                    TextColor="Black"
                    PlaceholderColor="Gray"
                    BackgroundColor="White"
-                   HeightRequest="50" />
+                   HeightRequest="45" />
 
             <Button Text="ENTRA IN OFFICINA"
                     Command="{Binding LoginCommand}"
@@ -46,9 +44,9 @@
                     BackgroundColor="#D32F2F"
                     TextColor="White"
                     FontAttributes="Bold"
-                    HeightRequest="55"
-                    CornerRadius="10" />
-
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    Margin="0,10,0,0"/>
             <ActivityIndicator IsRunning="{Binding IsBusy}"
                                IsVisible="{Binding IsBusy}"
                                Color="#D32F2F"

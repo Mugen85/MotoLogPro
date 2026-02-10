@@ -29,8 +29,8 @@ namespace MotoLogPro.Client
 
             // Configurazione URL API (Usa la porta corretta del tuo progetto API!)
             string apiUrl = DeviceInfo.Platform == DevicePlatform.Android
-                ? "http://10.0.2.2:5033"   // Controlla la porta HTTP nel launchSettings.json dell'API
-                : "https://localhost:7196"; // Controlla la porta HTTPS
+                ? "http://10.0.2.2:5141"   // Controlla la porta HTTP nel launchSettings.json dell'API
+                : "https://localhost:7035"; // Controlla la porta HTTPS
 
             builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
             {

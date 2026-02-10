@@ -7,9 +7,19 @@
             InitializeComponent();
         }
 
+        // Override CreateWindow only once and add window resizing logic here
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            var window = new Window(new AppShell());
+
+#if WINDOWS
+            const int newWidth = 400;
+            const int newHeight = 700;
+            window.Width = newWidth;
+            window.Height = newHeight;
+#endif
+
+            return window;
         }
     }
 }
