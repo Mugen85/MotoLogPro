@@ -32,7 +32,12 @@ namespace MotoLogPro.Client.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Login error: {ex.Message}");
+                // AGGIUNGI QUESTA RIGA PER VEDERE L'ERRORE NELLA CONSOLE DI OUTPUT
+                System.Diagnostics.Debug.WriteLine($"[ERRORE LOGIN]: {ex.Message}");
+
+                // Se vuoi vedere l'errore a schermo (solo per debug estremo):
+                // await Shell.Current.DisplayAlert("Debug Error", ex.Message, "OK");
+
                 return false;
             }
         }
