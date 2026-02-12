@@ -12,13 +12,17 @@
         {
             var window = new Window(new AppShell());
 
+            // --- CONFIGURAZIONE SPECIFICA PER WINDOWS ---
 #if WINDOWS
-            const int newWidth = 400;
-            const int newHeight = 700;
-            window.Width = newWidth;
-            window.Height = newHeight;
-#endif
+            // Diamo una dimensione dignitosa da applicazione Desktop
+            window.Width = 1200;
+            window.Height = 800;
 
+            // Opzionale: Possiamo anche impostare un minimo per evitare che la stringano troppo
+            window.MinimumWidth = 800;
+            window.MinimumHeight = 600;
+#endif
+            // ---------------------------------------------
             return window;
         }
     }

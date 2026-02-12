@@ -1,6 +1,4 @@
-﻿using MotoLogPro.Shared.DTOs; // Serve per vedere LoginRequestDto ecc.
-
-namespace MotoLogPro.Client.Services
+﻿namespace MotoLogPro.Client.Services
 {
     public interface IAuthService
     {

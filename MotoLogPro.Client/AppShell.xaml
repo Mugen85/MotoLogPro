@@ -3,12 +3,23 @@
     x:Class="MotoLogPro.Client.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:pages="clr-namespace:MotoLogPro.Client.Pages"
+    xmlns:pages="clr-namespace:MotoLogPro.Client.Pages" 
+    xmlns:local="clr-namespace:MotoLogPro.Client"
     Title="MotoLogPro">
 
-    <ShellContent
+    <ShellContent 
         Title="Login"
+        Route="LoginPage"
         ContentTemplate="{DataTemplate pages:LoginPage}"
-        Route="LoginPage" />
+        Shell.NavBarIsVisible="False"
+        Shell.TabBarIsVisible="False" />
+
+    <TabBar>
+        <ShellContent 
+            Title="Officina" 
+            Route="DashboardPage" 
+            Icon="dotnet_bot.png"
+            ContentTemplate="{DataTemplate pages:DashboardPage}" />
+    </TabBar>
 
 </Shell>

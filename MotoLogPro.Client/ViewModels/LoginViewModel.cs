@@ -8,7 +8,7 @@ namespace MotoLogPro.Client.ViewModels
     {
         private readonly IAuthService _authService = authService;
 
-        // --- CORREZIONE 1: Usa proprietà standard per evitare MVVMTK0041 ---
+        // --- PROPRIETÀ ---
 
         private string? _email;
         public string? Email
@@ -23,8 +23,6 @@ namespace MotoLogPro.Client.ViewModels
             get => _password;
             set => SetProperty(ref _password, value);
         }
-
-        // --- CORREZIONE 2: Usa bool normale (non nullable) ---
 
         private bool _isBusy;
         public bool IsBusy
@@ -41,15 +39,17 @@ namespace MotoLogPro.Client.ViewModels
 
         public bool IsNotBusy => !IsBusy;
 
+        // --- COMANDI ---
+
         [RelayCommand]
         private async Task LoginAsync()
         {
             if (IsBusy) return;
 
-            // Validazione
+            // 1. Validazione Input
             if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             {
-                await Shell.Current.DisplayAlertAsync("Errore", "Inserisci email e password", "OK");
+                await Shell.Current.DisplayAlert("Errore", "Inserisci email e password", "OK");
                 return;
             }
 
@@ -57,21 +57,24 @@ namespace MotoLogPro.Client.ViewModels
             {
                 IsBusy = true;
 
+                // 2. Tentativo di Login tramite API
                 bool success = await _authService.LoginAsync(Email, Password);
 
                 if (success)
                 {
-                    await Shell.Current.DisplayAlertAsync("Successo", "Benvenuto in MotoLogPro!", "Gas a martello ✊");
-                    // Qui metteremo la navigazione in futuro
+                    // 3. NAVIGAZIONE (Il pezzo mancante!)
+                    // Le "//" resettano lo stack di navigazione. 
+                    // Significa che l'utente non potrà tornare al Login premendo "Indietro".
+                    await Shell.Current.GoToAsync("//DashboardPage");
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlertAsync("Errore", "Credenziali non valide", "Riprova");
+                    await Shell.Current.DisplayAlert("Errore", "Credenziali non valide", "Riprova");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlertAsync("Errore Tecnico", ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Errore Tecnico", ex.Message, "OK");
             }
             finally
             {

@@ -54,6 +54,35 @@ namespace MotoLogPro.Client
             {
                 client.BaseAddress = new Uri(apiUrl);
             });
+
+            // ... dopo la registrazione di LoginPage e LoginViewModel ...
+
+            // --- AGGIUNGI QUESTE RIGHE ---
+
+            // Registrazione del Servizio Dati (Se non l'hai già messa)
+            builder.Services.AddHttpClient<IVehicleService, VehicleService>(client =>
+            {
+                client.BaseAddress = new Uri(apiUrl);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+#if DEBUG
+                handler.ServerCertificateCustomValidationCallback = (m, c, ch, e) => true;
+#endif
+                return handler;
+            });
+
+            // Registrazione Dashboard (Pagina + ViewModel)
+            builder.Services.AddTransient<DashboardViewModel>();
+            builder.Services.AddTransient<DashboardPage>();
+
+            // --- FINE AGGIUNTA ---
+
+#if DEBUG
+            builder.Logging.AddDebug();
+#endif
+
             return builder.Build();
         }
     }
