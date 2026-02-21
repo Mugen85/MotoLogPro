@@ -83,4 +83,13 @@ Questo è un progetto open-source nato per passione e apprendimento. Feedback, P
 * Unit Test coverage.
 
 ---
+
+## ☕ Supporta il progetto
+
+Se questo progetto ti è utile o ti ha ispirato, considera di offrirmi un caffè!
+Ogni contributo mi aiuta a dedicare più tempo allo sviluppo di nuove funzionalità. 🙏
+
+[![PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/wildmak)
+
+---
 *Developed with ❤️, passion and mechanical precision.*
