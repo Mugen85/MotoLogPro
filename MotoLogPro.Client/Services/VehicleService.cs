@@ -24,7 +24,7 @@ namespace MotoLogPro.Client.Services
             {
                 // 3. Chiamiamo l'API
                 // Assumiamo che l'endpoint sia /api/vehicles (controlla il tuo Controller API!)
-                var response = await _httpClient.GetFromJsonAsync<List<VehicleDto>>("api/vehicles");
+                var response = await _httpClient.GetFromJsonAsync<List<VehicleDto>>("api/motorcycles");
                 return response ?? [];
             }
             catch (Exception ex)

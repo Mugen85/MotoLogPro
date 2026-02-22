@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MotoLogPro.Domain.Entities;      // <--- Serve per ApplicationUser
+using MotoLogPro.Domain.Interfaces;
 using MotoLogPro.Infrastructure.Data;
+using MotoLogPro.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"),
         // IMPORTANTE: Le migrazioni si trovano nel progetto Infrastructure, non qui!
         b => b.MigrationsAssembly("MotoLogPro.Infrastructure")));
+
+builder.Services.AddScoped<IMotorcycleService, MotorcycleService>();
 
 // --- 2. CONFIGURAZIONE IDENTITY (AUTH) ---
 // Abilita l'autenticazione e l'autorizzazione

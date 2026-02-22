@@ -1,76 +1,62 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MotoLogPro.Domain.Entities;
-using MotoLogPro.Infrastructure.Data;
+using MotoLogPro.Domain.Interfaces;
 using MotoLogPro.Shared.DTOs;
 using System.Security.Claims; // Serve per leggere l'ID utente dal Token
 
 namespace MotoLogPro.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/vehicles")]
     [ApiController]
-    [Authorize] // 🔒 Protegge tutto il controller: serve il Token JWT!
-    public class MotorcyclesController(ApplicationDbContext context) : ControllerBase
+    [Authorize]
+    public class MotorcyclesController(IMotorcycleService motorcycleService) : ControllerBase
     {
-        private readonly ApplicationDbContext _context = context;
-
-        // GET: api/Motorcycles
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VehicleDto>>> GetMotorcycles()
         {
-            // 1. "Chi è l'utente che sta chiamando?"
-            // Estraiamo l'ID utente dal Token JWT
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("Utente non riconosciuto");
-            }
-
-            // 2. Query al DB filtrata per utente
-            // "Dammi solo le moto di QUESTO utente"
-            var motos = await _context.Motorcycles
-                                      .Where(m => m.UserId == userId)
-                                      .ToListAsync();
-
-            // 3. Mappatura Entity -> DTO
-            var dtos = motos.Select(m => new VehicleDto
-            {
-                Id = m.Id,
-                Brand = m.Brand,
-                Model = m.Model,
-                Year = m.Year,
-                Vin = m.Vin,
-                // OwnerName lo lasciamo generico o vuoto, visto che sappiamo già chi è l'utente
-                OwnerName = User.Identity?.Name ?? "Mio Garage"
-            }).ToList();
-
-            return Ok(dtos);
+            var result = await motorcycleService.GetByUserAsync(userId);
+            return Ok(result);
         }
 
-        // POST: api/Motorcycles (Per aggiungere una moto)
         [HttpPost]
-        public async Task<ActionResult<VehicleDto>> PostMotorcycle(VehicleDto vehicleDto)
+        public async Task<ActionResult<VehicleDto>> PostMotorcycle(CreateMotorcycleDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var newMoto = new Motorcycle
+            try
             {
-                Brand = vehicleDto.Brand,
-                Model = vehicleDto.Model,
-                Year = vehicleDto.Year,
-                Vin = vehicleDto.Vin,
-                UserId = userId!, // Colleghiamo la moto all'utente loggato
-                CreatedAt = DateTime.UtcNow
-            };
+                var created = await motorcycleService.CreateAsync(userId, dto);
+                return CreatedAtAction(nameof(GetMotorcycles), new { id = created.Id }, created);
+            }
+            catch (DbUpdateException)
+            {
+                return Conflict("Il VIN inserito è già presente nel sistema.");
+            }
+        }
 
-            _context.Motorcycles.Add(newMoto);
-            await _context.SaveChangesAsync();
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutMotorcycle(int id, CreateMotorcycleDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            vehicleDto.Id = newMoto.Id; // Restituiamo l'ID generato dal DB
+            var updated = await motorcycleService.UpdateAsync(userId, id, dto);
+            return updated ? NoContent() : NotFound();
+        }
 
-            return CreatedAtAction(nameof(GetMotorcycles), new { id = newMoto.Id }, vehicleDto);
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMotorcycle(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var deleted = await motorcycleService.DeleteAsync(userId, id);
+            return deleted ? NoContent() : NotFound();
         }
     }
 }
