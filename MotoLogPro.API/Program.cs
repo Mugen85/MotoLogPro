@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using MotoLogPro.Infrastructure.Data;  // <--- QUESTA è quella che ti manca!
+ï»¿using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using MotoLogPro.Domain.Entities;      // <--- Serve per ApplicationUser
+using MotoLogPro.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,38 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
 // --- 3. SERVIZI API ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// CONFIGURAZIONE SWAGGER
+builder.Services.AddSwaggerGen(options =>
+{
+    // Risolve i conflitti di nomi (es. se hai classi DTO e Entity con lo stesso nome)
+    options.CustomSchemaIds(type => type.ToString());
+
+    // Configurazione del Lucchetto (Bearer Token)
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Inserisci il token JWT",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 

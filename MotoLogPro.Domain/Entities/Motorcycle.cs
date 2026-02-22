@@ -27,6 +27,8 @@ namespace MotoLogPro.Domain.Entities
 
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser? User { get; set; }
+        // Qui puoi aggiungere proprietà custom dell'utente se vuoi
+        // Es: public string FullName { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
