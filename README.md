@@ -16,6 +16,8 @@ L'obiettivo tecnico è dimostrare l'applicazione di pattern architetturali avanz
 
 ## 🏗️ Architettura
 
+![Dependency Diagram](./docs/dependencies.svg)
+
 La soluzione segue rigorosamente la **Clean Architecture** per garantire la separazione delle responsabilità (Separation of Concerns), scalabilità e testabilità. È suddivisa in 6 progetti distinti:
 
 * **`MotoLogPro.Domain`**: Il cuore del sistema. Contiene le Entità (`Motorcycle`, `ApplicationUser`) e la logica di business pura. Nessuna dipendenza esterna.
