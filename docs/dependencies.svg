@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 580" width="860" height="580" font-family="'Segoe UI', Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="860" height="580" fill="#0d1117" rx="12"/>
+
+  <!-- Title -->
+  <text x="430" y="38" text-anchor="middle" font-size="18" font-weight="700" fill="#e6edf3">MotoLogPro — Package Dependency Diagram</text>
+  <text x="430" y="58" text-anchor="middle" font-size="11" fill="#7d8590">«Clean Architecture» — le frecce indicano la direzione delle dipendenze</text>
+  <line x1="40" y1="70" x2="820" y2="70" stroke="#21262d" stroke-width="1"/>
+
+  <!-- ============================================================ -->
+  <!-- ARROW DEFS -->
+  <!-- ============================================================ -->
+  <defs>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4b5563"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8b5cf6"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow-pink" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ec4899"/>
+    </marker>
+    <marker id="arrow-slate" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- ============================================================ -->
+  <!-- NODES -->
+  <!-- ============================================================ -->
+
+  <!-- SHARED (center top area — base of all) x=330 y=90 w=200 h=72 -->
+  <g id="shared">
+    <rect x="330" y="88" width="200" height="72" rx="6" fill="#022c22" stroke="#10b981" stroke-width="1.5"/>
+    <!-- UML package tab -->
+    <rect x="330" y="80" width="80" height="12" rx="3" fill="#022c22" stroke="#10b981" stroke-width="1.5"/>
+    <text x="370" y="89" text-anchor="middle" font-size="9" fill="#10b981">«DTO package»</text>
+    <text x="430" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#d1fae5">MotoLogPro.Shared</text>
+    <text x="430" y="132" text-anchor="middle" font-size="10" fill="#6ee7b7">VehicleDto</text>
+    <text x="430" y="148" text-anchor="middle" font-size="10" fill="#6ee7b7">CreateMotorcycleDto</text>
+  </g>
+
+  <!-- DOMAIN x=330 y=220 w=200 h=80 -->
+  <g id="domain">
+    <rect x="330" y="220" width="200" height="80" rx="6" fill="#1c0d00" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="330" y="212" width="80" height="12" rx="3" fill="#1c0d00" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="370" y="221" text-anchor="middle" font-size="9" fill="#f59e0b">«domain»</text>
+    <text x="430" y="247" text-anchor="middle" font-size="13" font-weight="700" fill="#fef3c7">MotoLogPro.Domain</text>
+    <text x="430" y="264" text-anchor="middle" font-size="10" fill="#fcd34d">Motorcycle</text>
+    <text x="430" y="279" text-anchor="middle" font-size="10" fill="#fcd34d">ApplicationUser</text>
+    <text x="430" y="294" text-anchor="middle" font-size="10" fill="#fcd34d">IMotorcycleService</text>
+  </g>
+
+  <!-- INFRASTRUCTURE x=90 y=370 w=200 h=80 -->
+  <g id="infra">
+    <rect x="90" y="370" width="200" height="80" rx="6" fill="#1a0533" stroke="#8b5cf6" stroke-width="1.5"/>
+    <rect x="90" y="362" width="80" height="12" rx="3" fill="#1a0533" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="130" y="371" text-anchor="middle" font-size="9" fill="#8b5cf6">«persistence»</text>
+    <text x="190" y="397" text-anchor="middle" font-size="13" font-weight="700" fill="#ede9fe">MotoLogPro</text>
+    <text x="190" y="413" text-anchor="middle" font-size="13" font-weight="700" fill="#ede9fe">.Infrastructure</text>
+    <text x="190" y="432" text-anchor="middle" font-size="10" fill="#c4b5fd">ApplicationDbContext</text>
+    <text x="190" y="445" text-anchor="middle" font-size="10" fill="#c4b5fd">MotorcycleService</text>
+  </g>
+
+  <!-- API x=330 y=370 w=200 h=80 -->
+  <g id="api">
+    <rect x="330" y="370" width="200" height="80" rx="6" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="330" y="362" width="80" height="12" rx="3" fill="#0a1628" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="370" y="371" text-anchor="middle" font-size="9" fill="#3b82f6">«REST API»</text>
+    <text x="430" y="397" text-anchor="middle" font-size="13" font-weight="700" fill="#dbeafe">MotoLogPro.API</text>
+    <text x="430" y="414" text-anchor="middle" font-size="10" fill="#93c5fd">MotorcyclesController</text>
+    <text x="430" y="429" text-anchor="middle" font-size="10" fill="#93c5fd">Program.cs</text>
+    <text x="430" y="444" text-anchor="middle" font-size="10" fill="#93c5fd">JWT + Swagger</text>
+  </g>
+
+  <!-- CLIENT x=570 y=220 w=200 h=80 -->
+  <g id="client">
+    <rect x="570" y="220" width="200" height="80" rx="6" fill="#2d0a1e" stroke="#ec4899" stroke-width="1.5"/>
+    <rect x="570" y="212" width="80" height="12" rx="3" fill="#2d0a1e" stroke="#ec4899" stroke-width="1.5"/>
+    <text x="610" y="221" text-anchor="middle" font-size="9" fill="#ec4899">«MAUI client»</text>
+    <text x="670" y="247" text-anchor="middle" font-size="13" font-weight="700" fill="#fce7f3">MotoLogPro.Client</text>
+    <text x="670" y="264" text-anchor="middle" font-size="10" fill="#f9a8d4">VehicleService</text>
+    <text x="670" y="279" text-anchor="middle" font-size="10" fill="#f9a8d4">AuthService</text>
+    <text x="670" y="294" text-anchor="middle" font-size="10" fill="#f9a8d4">ViewModels / Pages</text>
+  </g>
+
+  <!-- TESTS x=570 y="370" w=200 h=80 -->
+  <g id="tests">
+    <rect x="570" y="370" width="200" height="80" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <rect x="570" y="362" width="80" height="12" rx="3" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <text x="610" y="371" text-anchor="middle" font-size="9" fill="#64748b">«xUnit»</text>
+    <text x="670" y="397" text-anchor="middle" font-size="13" font-weight="700" fill="#cbd5e1">MotoLogPro.Tests</text>
+    <text x="670" y="414" text-anchor="middle" font-size="10" fill="#94a3b8">Unit Tests</text>
+    <text x="670" y="429" text-anchor="middle" font-size="10" fill="#94a3b8">Integration Tests</text>
+    <text x="670" y="444" text-anchor="middle" font-size="10" fill="#94a3b8">(in sviluppo)</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- ARROWS -->
+  <!-- ============================================================ -->
+
+  <!-- Domain → Shared (down to up, Domain needs Shared DTOs) -->
+  <line x1="430" y1="220" x2="430" y2="162" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-green)"/>
+
+  <!-- Infrastructure → Domain -->
+  <path d="M 190 370 L 190 340 L 390 340 L 390 302" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrow-purple)"/>
+
+  <!-- Infrastructure → Shared -->
+  <path d="M 290 410 L 310 410 L 310 155 L 330 155" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrow-purple)"/>
+
+  <!-- API → Infrastructure -->
+  <line x1="330" y1="410" x2="292" y2="410" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-purple)"/>
+
+  <!-- API → Domain -->
+  <line x1="430" y1="370" x2="430" y2="302" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-gray)"/>
+
+  <!-- API → Shared -->
+  <path d="M 480 370 L 480 350 L 510 350 L 510 155 L 530 155" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrow-green)"/>
+
+  <!-- Client → Shared -->
+  <path d="M 620 220 L 580 220 L 580 170 L 532 170 L 532 162" stroke="#ec4899" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrow-green)"/>
+
+  <!-- Tests → API -->
+  <line x1="570" y1="410" x2="532" y2="410" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-blue)"/>
+
+  <!-- Tests → Domain -->
+  <path d="M 670 370 L 670 330 L 470 330 L 470 302" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrow-gray)"/>
+
+  <!-- HTTP annotation between Client and API -->
+  <line x1="570" y1="310" x2="532" y2="380" stroke="#475569" stroke-width="1" stroke-dasharray="4,4"/>
+  <rect x="490" y="330" width="88" height="20" rx="4" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="534" y="344" text-anchor="middle" font-size="10" fill="#94a3b8">HTTP / REST</text>
+
+  <!-- ============================================================ -->
+  <!-- LEGEND -->
+  <!-- ============================================================ -->
+  <rect x="40" y="500" width="780" height="60" rx="8" fill="#161b22" stroke="#21262d" stroke-width="1"/>
+  <text x="430" y="518" text-anchor="middle" font-size="10" font-weight="600" fill="#7d8590">LEGENDA</text>
+
+  <!-- item 1 -->
+  <line x1="60" y1="540" x2="90" y2="540" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-gray)"/>
+  <text x="96" y="544" font-size="10" fill="#7d8590">«usa» dipendenza diretta</text>
+
+  <!-- item 2 -->
+  <rect x="230" y="534" width="12" height="12" rx="2" fill="#022c22" stroke="#10b981" stroke-width="1"/>
+  <text x="248" y="544" font-size="10" fill="#10b981">Shared</text>
+
+  <rect x="310" y="534" width="12" height="12" rx="2" fill="#1c0d00" stroke="#f59e0b" stroke-width="1"/>
+  <text x="328" y="544" font-size="10" fill="#f59e0b">Domain</text>
+
+  <rect x="390" y="534" width="12" height="12" rx="2" fill="#1a0533" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="408" y="544" font-size="10" fill="#8b5cf6">Infrastructure</text>
+
+  <rect x="500" y="534" width="12" height="12" rx="2" fill="#0a1628" stroke="#3b82f6" stroke-width="1"/>
+  <text x="518" y="544" font-size="10" fill="#3b82f6">API</text>
+
+  <rect x="558" y="534" width="12" height="12" rx="2" fill="#2d0a1e" stroke="#ec4899" stroke-width="1"/>
+  <text x="576" y="544" font-size="10" fill="#ec4899">Client</text>
+
+  <rect x="628" y="534" width="12" height="12" rx="2" fill="#0f172a" stroke="#64748b" stroke-width="1"/>
+  <text x="646" y="544" font-size="10" fill="#64748b">Tests</text>
+
+  <text x="720" y="544" font-size="10" fill="#475569">· .NET 10 · C# 13</text>
+
+</svg>
