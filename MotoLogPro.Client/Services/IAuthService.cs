@@ -6,5 +6,6 @@
         Task<bool> RegisterAsync(string fullName, string email, string password, string confirmPassword);
         Task LogoutAsync();
         Task<bool> IsUserLoggedIn();
+        Task<bool> RefreshTokenAsync();
     }
 }

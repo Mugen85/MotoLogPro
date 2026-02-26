@@ -19,47 +19,28 @@ namespace MotoLogPro.Client
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
-            // Registrazione delle Pagine e dei ViewModel
-            // Transient = Ne crea uno nuovo ogni volta che apro la pagina
-            builder.Services.AddTransient<LoginPage>();
-            builder.Services.AddTransient<LoginViewModel>();
 
-
-            // Configurazione URL API
             string apiUrl = DeviceInfo.Platform == DevicePlatform.Android
-                ? "https://10.0.2.2:7035"   // <--- TORNALIMO A USARE HTTPS (Porta 7035)
-                : "https://localhost:7035"; // Windows HTTPS
+                ? "https://10.0.2.2:7035"
+                : "https://localhost:7035";
 
-            // Registriamo l'HttpClient con un "Handler" personalizzato che bypassa il controllo SSL
+            // AuthService — con SSL bypass per sviluppo
             builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
             {
                 client.BaseAddress = new Uri(apiUrl);
             })
             .ConfigurePrimaryHttpMessageHandler(() =>
             {
-                // Creiamo un handler che gestisce le richieste HTTP
                 var handler = new HttpClientHandler();
-
-                // SOLO PER SVILUPPO: Ignora gli errori di certificato SSL (perché sono self-signed)
-                // Se siamo in Debug, restituiamo sempre "true" (tutto ok)
 #if DEBUG
-                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+                handler.ServerCertificateCustomValidationCallback = (m, c, ch, e) => true;
 #endif
                 return handler;
             });
 
-            builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
-            {
-                client.BaseAddress = new Uri(apiUrl);
-            });
-
-            // ... dopo la registrazione di LoginPage e LoginViewModel ...
-
-            // --- AGGIUNGI QUESTE RIGHE ---
-
-            // Registrazione del Servizio Dati (Se non l'hai già messa)
+            // VehicleService — con SSL bypass per sviluppo
             builder.Services.AddHttpClient<IVehicleService, VehicleService>(client =>
             {
                 client.BaseAddress = new Uri(apiUrl);
@@ -73,15 +54,11 @@ namespace MotoLogPro.Client
                 return handler;
             });
 
-            // Registrazione Dashboard (Pagina + ViewModel)
+            // Pagine e ViewModel
+            builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<DashboardPage>();
-
-            // --- FINE AGGIUNTA ---
-
-#if DEBUG
-            builder.Logging.AddDebug();
-#endif
 
             return builder.Build();
         }

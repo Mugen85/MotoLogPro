@@ -1,37 +1,49 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using MotoLogPro.Shared.DTOs;
 
 namespace MotoLogPro.Client.Services
 {
-    public class VehicleService(HttpClient httpClient) : IVehicleService
+    public class VehicleService(HttpClient httpClient, IAuthService authService) : IVehicleService
     {
         private readonly HttpClient _httpClient = httpClient;
+        private readonly IAuthService _authService = authService;
 
         public async Task<List<VehicleDto>> GetVehiclesAsync()
         {
-            // 1. Recuperiamo il Token salvato al Login
+            // Prima chiamata con il token attuale
+            var response = await SendAuthenticatedRequest(
+                () => _httpClient.GetAsync("api/vehicles")
+            );
+
+            // Se il token è scaduto (401), proviamo a rinnovarlo e ripetere
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                var refreshed = await _authService.RefreshTokenAsync();
+                if (!refreshed) return []; // Refresh fallito → logout già gestito in AuthService
+
+                // Seconda chiamata con il token nuovo
+                response = await SendAuthenticatedRequest(
+                    () => _httpClient.GetAsync("api/vehicles")
+                );
+            }
+
+            if (!response.IsSuccessStatusCode) return [];
+
+            var result = await response.Content.ReadFromJsonAsync<List<VehicleDto>>();
+            return result ?? [];
+        }
+
+        // Metodo helper: attacca il token JWT ad ogni richiesta
+        private async Task<HttpResponseMessage> SendAuthenticatedRequest(
+            Func<Task<HttpResponseMessage>> request)
+        {
             var token = await SecureStorage.GetAsync("auth_token");
-
-            if (string.IsNullOrEmpty(token))
-                return []; // O gestisci l'errore (logout forzato)
-
-            // 2. Attacchiamo il Token alla richiesta (Header: Authorization Bearer eyJ...)
             _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
+                new AuthenticationHeaderValue("Bearer", token ?? string.Empty);
 
-            try
-            {
-                // 3. Chiamiamo l'API
-                // Assumiamo che l'endpoint sia /api/vehicles (controlla il tuo Controller API!)
-                var response = await _httpClient.GetFromJsonAsync<List<VehicleDto>>("api/motorcycles");
-                return response ?? [];
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[ERRORE API] {ex.Message}");
-                return []; // Per ora ritorniamo vuoto in caso di errore
-            }
+            return await request();
         }
     }
 }
