@@ -19,16 +19,16 @@ namespace MotoLogPro.Domain.Entities
         public int Year { get; set; }
 
         [MaxLength(17)]
-        public string Vin { get; set; } = string.Empty; // Telaio
+        public string Vin { get; set; } = string.Empty;
 
-        // Foreign Key verso l'Utente
+        [MaxLength(10)]
+        public string LicensePlate { get; set; } = string.Empty; // ← AGGIUNTO
+
         [Required]
         public string UserId { get; set; } = string.Empty;
 
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser? User { get; set; }
-        // Qui puoi aggiungere proprietà custom dell'utente se vuoi
-        // Es: public string FullName { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

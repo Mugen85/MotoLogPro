@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MotoLogPro.Client.Services;
 using MotoLogPro.Shared.DTOs;
@@ -7,54 +8,61 @@ using System.Collections.ObjectModel;
 namespace MotoLogPro.Client.ViewModels
 {
     public partial class DashboardViewModel(
-       IVehicleService vehicleService,
-       IAuthService authService) : ObservableObject
+        IVehicleService vehicleService,
+        IAuthService authService) : ObservableObject
     {
         private readonly IVehicleService _vehicleService = vehicleService;
         private readonly IAuthService _authService = authService;
 
-        // La lista che la UI osserva. ObservableCollection aggiorna la UI automaticamente quando aggiungi/rimuovi item.
         public ObservableCollection<VehicleDto> Vehicles { get; } = [];
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsNotBusy))] // ← notifica IsNotBusy quando IsBusy cambia
+        [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+        [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
         bool isBusy;
 
-        // CommunityToolkit genera IsBusy ma NON IsNotBusy — lo definiamo noi
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
+        bool hasError;
+
+        [ObservableProperty]
+        string errorMessage = string.Empty;
+
         public bool IsNotBusy => !IsBusy;
+
+        // Mostra l'empty state solo se non stiamo caricando, non c'è errore e la lista è vuota
+        public bool ShowEmptyState => !IsBusy && !HasError && Vehicles.Count == 0;
 
         [RelayCommand]
         async Task LoadData()
         {
             if (IsBusy) return;
+
             IsBusy = true;
+            HasError = false;
 
             try
             {
-                // Proviamo a chiamare l'API
                 var list = await _vehicleService.GetVehiclesAsync();
 
                 Vehicles.Clear();
+                foreach (var v in list)
+                    Vehicles.Add(v);
 
-                if (list.Count > 0)
-                {
-                    foreach (var v in list) Vehicles.Add(v);
-                }
-                else
-                {
-                    // --- DATI MOCK (FINTI) PER TESTARE LA GRAFICA ---
-                    // Togli questo blocco quando avrai il DB pieno!
-                    Vehicles.Add(new VehicleDto { Brand = "Yamaha", Model = "XT1200Z Super Ténéré", LicensePlate = "AA123BB", Year = 2018, OwnerName = "Io" });
-                    Vehicles.Add(new VehicleDto { Brand = "Honda", Model = "Africa Twin 1100", LicensePlate = "CC456DD", Year = 2022, OwnerName = "Cliente Test" });
-                    Vehicles.Add(new VehicleDto { Brand = "Ducati", Model = "Multistrada V4", LicensePlate = "EE789FF", Year = 2023, OwnerName = "Mario Rossi" });
-                    Vehicles.Add(new VehicleDto { Brand = "Moto Guzzi", Model = "V85 TT", LicensePlate = "GG101HH", Year = 2021, OwnerName = "Luigi Verdi" });
-                    // -----------------------------------------------
-                }
+                // Notifica ShowEmptyState dopo aver popolato la lista
+                OnPropertyChanged(nameof(ShowEmptyState));
+            }
+            catch (HttpRequestException ex)
+            {
+                HasError = true;
+                ErrorMessage = "Impossibile contattare il server. Verifica la connessione.";
+                System.Diagnostics.Debug.WriteLine($"[ERRORE RETE]: {ex.Message}");
             }
             catch (Exception ex)
             {
-                // In caso di errore API, mostriamo comunque i dati finti per ora
-                await Shell.Current.DisplayAlert("Info", "Impossibile contattare server, carico dati test.", "OK");
+                HasError = true;
+                ErrorMessage = "Si è verificato un errore imprevisto.";
+                System.Diagnostics.Debug.WriteLine($"[ERRORE]: {ex.Message}");
             }
             finally
             {
@@ -65,8 +73,6 @@ namespace MotoLogPro.Client.ViewModels
         [RelayCommand]
         async Task Logout()
         {
-            // Fix: usa AuthService invece di accedere direttamente a SecureStorage
-            // Questo garantisce che ENTRAMBI i token vengano rimossi (access + refresh)
             await _authService.LogoutAsync();
             await Shell.Current.GoToAsync("//LoginPage");
         }

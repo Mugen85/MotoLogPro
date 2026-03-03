@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MotoLogPro.Domain.Interfaces;
 using MotoLogPro.Shared.DTOs;
-using System.Security.Claims; // Serve per leggere l'ID utente dal Token
+using System.Security.Claims;
 
 namespace MotoLogPro.API.Controllers
 {
@@ -28,15 +27,9 @@ namespace MotoLogPro.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            try
-            {
-                var created = await motorcycleService.CreateAsync(userId, dto);
-                return CreatedAtAction(nameof(GetMotorcycles), new { id = created.Id }, created);
-            }
-            catch (DbUpdateException)
-            {
-                return Conflict("Il VIN inserito è già presente nel sistema.");
-            }
+            // DbUpdateException (VIN duplicato) è ora gestita dal GlobalExceptionMiddleware
+            var created = await motorcycleService.CreateAsync(userId, dto);
+            return CreatedAtAction(nameof(GetMotorcycles), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]

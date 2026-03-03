@@ -21,6 +21,7 @@ namespace MotoLogPro.Infrastructure.Services
                     Model = m.Model,
                     Year = m.Year,
                     Vin = m.Vin,
+                    LicensePlate = m.LicensePlate, // ← AGGIUNTO
                     OwnerName = m.User!.FullName
                 })
                 .ToListAsync();
@@ -34,6 +35,7 @@ namespace MotoLogPro.Infrastructure.Services
                 Model = dto.Model,
                 Year = dto.Year,
                 Vin = dto.Vin,
+                LicensePlate = dto.LicensePlate, // ← AGGIUNTO
                 UserId = userId,
                 CreatedAt = DateTime.UtcNow
             };
@@ -47,7 +49,8 @@ namespace MotoLogPro.Infrastructure.Services
                 Brand = moto.Brand,
                 Model = moto.Model,
                 Year = moto.Year,
-                Vin = moto.Vin
+                Vin = moto.Vin,
+                LicensePlate = moto.LicensePlate // ← AGGIUNTO
             };
         }
 
@@ -62,6 +65,7 @@ namespace MotoLogPro.Infrastructure.Services
             moto.Model = dto.Model;
             moto.Year = dto.Year;
             moto.Vin = dto.Vin;
+            moto.LicensePlate = dto.LicensePlate; // ← AGGIUNTO
 
             await _context.SaveChangesAsync();
             return true;

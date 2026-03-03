@@ -30,9 +30,9 @@ namespace MotoLogPro.Shared.DTOs
 
         [Required]
         [StringLength(17, MinimumLength = 17, ErrorMessage = "Il VIN deve essere di 17 caratteri")]
-        public string Vin { get; set; } = string.Empty; // Numero telaio per API esterne
+        public string Vin { get; set; } = string.Empty;
 
         [StringLength(10)]
-        public string PlateNumber { get; set; } = string.Empty;
+        public string LicensePlate { get; set; } = string.Empty; // ← era PlateNumber
     }
 }
