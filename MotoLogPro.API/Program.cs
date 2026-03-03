@@ -74,7 +74,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication(); // ← aggiunta
 app.UseAuthorization(); // Abilita il controllo dei permessi
 
 // Mappa gli endpoint standard di Identity (es. /register, /login)

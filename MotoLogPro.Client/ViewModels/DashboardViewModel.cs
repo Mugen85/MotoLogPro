@@ -6,15 +6,22 @@ using System.Collections.ObjectModel;
 
 namespace MotoLogPro.Client.ViewModels
 {
-    public partial class DashboardViewModel(IVehicleService vehicleService) : ObservableObject
+    public partial class DashboardViewModel(
+       IVehicleService vehicleService,
+       IAuthService authService) : ObservableObject
     {
         private readonly IVehicleService _vehicleService = vehicleService;
+        private readonly IAuthService _authService = authService;
 
         // La lista che la UI osserva. ObservableCollection aggiorna la UI automaticamente quando aggiungi/rimuovi item.
         public ObservableCollection<VehicleDto> Vehicles { get; } = [];
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNotBusy))] // ← notifica IsNotBusy quando IsBusy cambia
         bool isBusy;
+
+        // CommunityToolkit genera IsBusy ma NON IsNotBusy — lo definiamo noi
+        public bool IsNotBusy => !IsBusy;
 
         [RelayCommand]
         async Task LoadData()
@@ -58,8 +65,9 @@ namespace MotoLogPro.Client.ViewModels
         [RelayCommand]
         async Task Logout()
         {
-            SecureStorage.Remove("auth_token");
-            // Torniamo al Login (gestiremo la navigazione tra poco)
+            // Fix: usa AuthService invece di accedere direttamente a SecureStorage
+            // Questo garantisce che ENTRAMBI i token vengano rimossi (access + refresh)
+            await _authService.LogoutAsync();
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }
