@@ -5,8 +5,10 @@
 ![C#](https://img.shields.io/badge/C%23-Latest-239120?style=for-the-badge&logo=c-sharp)
 ![Status](https://img.shields.io/badge/Status-In%20Development-yellow?style=for-the-badge)
 
-> **"Dal cacciavite al compilatore."**
+> **"Dal cacciavite al compilatore."**  
 > Un sistema di gestione officina Enterprise-grade costruito con .NET 10 e Clean Architecture.
+
+---
 
 ## 💡 Il Progetto
 
@@ -14,82 +16,103 @@
 
 L'obiettivo tecnico è dimostrare l'applicazione di pattern architetturali avanzati e l'uso delle ultimissime tecnologie Microsoft (.NET 10) in un contesto distribuito (Mobile + Cloud).
 
+---
+
 ## 🏗️ Architettura
 
 ![Dependency Diagram](./docs/dependencies.svg)
 
 La soluzione segue rigorosamente la **Clean Architecture** per garantire la separazione delle responsabilità (Separation of Concerns), scalabilità e testabilità. È suddivisa in 6 progetti distinti:
 
-* **`MotoLogPro.Domain`**: Il cuore del sistema. Contiene le Entità (`Motorcycle`, `ApplicationUser`) e la logica di business pura. Nessuna dipendenza esterna.
-* **`MotoLogPro.Shared`**: Libreria condivisa contenente i DTO (Data Transfer Objects) e i contratti che API e Client utilizzano per comunicare.
-* **`MotoLogPro.Infrastructure`**: Gestione dell'accesso ai dati (EF Core), configurazione del Database (SQL Server) e integrazioni esterne.
-* **`MotoLogPro.API`**: Backend ASP.NET Core Web API. Espone gli endpoint REST, gestisce l'autenticazione JWT e funge da gateway per il database.
-* **`MotoLogPro.Client`**: Frontend Cross-Platform sviluppato in **.NET MAUI**. Gestisce la UI, la logica di presentazione (MVVM) e lo storage sicuro locale.
-* **`MotoLogPro.Tests`**: Progetto xUnit per Unit Testing e Integration Testing.
+| Progetto | Responsabilità |
+|---|---|
+| `MotoLogPro.Domain` | Entità (`Motorcycle`, `ApplicationUser`), interfacce e logica di business pura. Nessuna dipendenza esterna. |
+| `MotoLogPro.Shared` | DTO e contratti condivisi tra API e Client. |
+| `MotoLogPro.Infrastructure` | Accesso ai dati (EF Core), DbContext, migrazioni e implementazione dei service. |
+| `MotoLogPro.API` | Backend ASP.NET Core Web API. Endpoint REST, autenticazione JWT, error handling globale. |
+| `MotoLogPro.Client` | Frontend Cross-Platform in .NET MAUI. UI, MVVM, storage sicuro locale. |
+| `MotoLogPro.Tests` | Unit test (xUnit + Moq) e Integration test. |
+
+---
 
 ## 🛠️ Stack Tecnologico
 
-* **Framework:** .NET 10 (LTS)
+* **Framework:** .NET 10
 * **Linguaggio:** C# 13
-* **Frontend:** .NET MAUI (Android, iOS, Windows)
+* **Frontend:** .NET MAUI (Android, iOS, Windows, macOS)
 * **Backend:** ASP.NET Core Web API
 * **Database:** SQL Server (LocalDB per sviluppo)
-* **ORM:** Entity Framework Core (Code-First)
+* **ORM:** Entity Framework Core 10 — Code First
 * **Autenticazione:** ASP.NET Core Identity + JWT Bearer Tokens
-* **Sicurezza:** SecureStorage (Keychain/Keystore), Role-Based Access Control (RBAC)
+* **Sicurezza:** SecureStorage (Keychain/Keystore), RBAC
+* **Testing:** xUnit, Moq, EF Core InMemory
 
-## ✨ Funzionalità Chiave (In Sviluppo)
+---
 
-- [x] **Setup Architetturale:** Clean Architecture a 6 livelli configurata.
-- [x] **Database:** Migrazioni EF Core e Relazioni 1:N (Utente -> Moto).
-- [x] **Autenticazione:** Registrazione, Login e generazione JWT Token.
-- [x] **Client Mobile:** Configurazione base MAUI e servizi HTTP.
-- [ ] **Gestione Moto:** CRUD completo delle moto con decodifica VIN.
-- [ ] **Dashboard:** Viste differenziate per Admin, Meccanici e Clienti.
-- [ ] **Integrazione API:** Connessione a servizi esterni (es. NHTSA) per dati tecnici.
+## ✨ Funzionalità (stato attuale)
+
+- [x] **Architettura:** Clean Architecture a 6 layer configurata e stabile.
+- [x] **Database:** Migrazioni EF Core, relazioni 1:N (Utente → Moto), campo `LicensePlate` allineato su domain e DTO.
+- [x] **Autenticazione:** Registrazione, Login, Logout e refresh JWT Token.
+- [x] **Client Mobile:** Login/Logout funzionante, Dashboard con lista veicoli, stati di errore e lista vuota distinti.
+- [x] **Error Handling:** Middleware globale su API con risposte `ProblemDetails` standardizzate (RFC 7807).
+- [ ] **Gestione Moto:** CRUD completo lato client (aggiunta, modifica, cancellazione veicolo).
+- [ ] **Interventi:** Storico manutenzione per veicolo (tagliandi, riparazioni, revisioni).
+- [ ] **Dashboard:** Viste differenziate per ruolo (Admin, Meccanico, Cliente).
+- [ ] **Integrazione esterna:** Decodifica VIN tramite API NHTSA.
+
+---
 
 ## 🚀 Come iniziare
 
-Per eseguire il progetto in locale:
-
 ### Prerequisiti
-* Visual Studio 2022 (Versione che supporta .NET 10 o Preview).
-* .NET 10 SDK installato.
+* Visual Studio 2022 con workload **.NET MAUI** e **ASP.NET** installati.
+* .NET 10 SDK.
 * SQL Server Express o LocalDB.
 
 ### Installazione
 
-1.  **Clona la repository:**
+1. **Clona la repository:**
     ```bash
-    git clone [https://github.com/TUO-USERNAME/MotoLogPro.git](https://github.com/TUO-USERNAME/MotoLogPro.git)
+    git clone https://github.com/Mugen85/MotoLogPro.git
     ```
 
-2.  **Database Setup:**
-    Apri la soluzione in Visual Studio, apri la *Console di Gestione Pacchetti* e lancia:
+2. **Crea il database** dalla Package Manager Console di Visual Studio:
     ```powershell
     Update-Database -Project MotoLogPro.Infrastructure -StartupProject MotoLogPro.API
     ```
 
-3.  **Avvia il Backend:**
-    Imposta `MotoLogPro.API` come progetto di avvio ed esegui.
-    * L'API sarà disponibile (di default) su `https://localhost:7196` (o porta simile).
+3. **Registra il primo utente** avviando `MotoLogPro.API` e usando Swagger (`/swagger`) → `POST /register`.
 
-4.  **Avvia il Client (Android/Windows):**
-    * **Nota per Android:** L'emulatore utilizza `10.0.2.2` per connettersi al localhost del PC. Assicurati che `MauiProgram.cs` sia configurato correttamente.
+4. **Avvia il Client** selezionando `MotoLogPro.Client` come progetto di avvio.
+    > **Nota Android:** l'emulatore usa `10.0.2.2` per raggiungere il localhost del PC. La configurazione è già gestita in `MauiProgram.cs`.
+
+---
+
+## 🧪 Test
+
+```bash
+dotnet test
+```
+
+Il progetto `MotoLogPro.Tests` include:
+* **Unit test** sul service layer (`MotorcycleServiceTests`) con DB InMemory.
+* **Unit test** sul controller layer (`MotorcyclesControllerTests`) con Moq.
+
+---
 
 ## 🤝 Contribuisci & Feedback
 
-Questo è un progetto open-source nato per passione e apprendimento. Feedback, Pull Request e suggerimenti sono benvenuti, specialmente su:
+Progetto open-source nato per passione e apprendimento. Feedback, PR e suggerimenti sono benvenuti, specialmente su:
 * Ottimizzazioni EF Core.
 * Miglioramenti UI/UX in MAUI.
-* Unit Test coverage.
+* Copertura dei test.
 
 ---
 
 ## ☕ Supporta il progetto
 
 Se questo progetto ti è utile o ti ha ispirato, considera di offrirmi un caffè!
-Ogni contributo mi aiuta a dedicare più tempo allo sviluppo di nuove funzionalità. 🙏
 
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/wildmak)
 
