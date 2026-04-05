@@ -5,8 +5,16 @@
 ![C#](https://img.shields.io/badge/C%23-Latest-239120?style=for-the-badge&logo=c-sharp)
 ![Status](https://img.shields.io/badge/Status-In%20Development-yellow?style=for-the-badge)
 
+> 🇮🇹 Italian only — English version coming soon.
+
 > **"Dal cacciavite al compilatore."**  
 > Un sistema di gestione officina Enterprise-grade costruito con .NET 10 e Clean Architecture.
+
+---
+
+## 📱 Screenshots
+
+> *Screenshots coming soon — app currently in active development.*
 
 ---
 
