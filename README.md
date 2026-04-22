@@ -28,7 +28,32 @@ L'obiettivo tecnico è dimostrare l'applicazione di pattern architetturali avanz
 
 ![Dependency Diagram](./docs/dependencies.svg)
 
-La soluzione segue rigorosamente la **Clean Architecture** per garantire la separazione delle responsabilità (Separation of Concerns), scalabilità e testabilità. È suddivisa in 6 progetti distinti:
+Il progetto è strutturato rigorosamente secondo i principi della **Clean Architecture** a 6 strati:
+
+1. **Domain:** Entità core (Motorcycle, ApplicationUser) isolate e prive di dipendenze esterne.  
+2. **Shared:** DTOs (es. VehicleDto) condivisi tra Client e API per garantire type-safety assoluta.  
+3. **Infrastructure:** Contesto EF Core, Migrations e logica di accesso ai dati (Service Layer).  
+4. **API:** Vigile urbano RESTful. Espone gli endpoint, valida i token JWT e smista il traffico.  
+5. **Client:** App .NET MAUI "Zero-Scroll" pattern MVVM per l'uso pratico in officina con mani sporche.  
+6. **Tests:** Suite xUnit (con Moq e InMemory DB) per collaudare il blocco motore.
+
+### **🛠️ Focus Architetturale: Riparare il motore, non la spia (Test vs Architettura)**
+
+Durante lo sviluppo del flusso di aggiunta veicoli (CRUD), un test unitario sul Controller falliva simulando l'inserimento di un Telaio (VIN) duplicato. Invece di "hackerare" il test per farlo passare ciecamente, **è stata blindata l'architettura**:
+
+* **Clean Controller:** Il Controller REST non ha idea di cosa sia Entity Framework. Non contiene blocchi catch per DbUpdateException, mantenendo intatta la *Separation of Concerns*.  
+* **GlobalExceptionMiddleware:** Come una centralina diagnostica, un middleware globale cattura le eccezioni non gestite (es. violazioni di unicità nel DB), le decodifica e restituisce al client un JSON standard ProblemDetails (HTTP 409 Conflict).  
+* **Test Architetturale:** Il test unitario è stato allineato per verificare l'architettura e non le singole stringhe: il test si assicura che l'eccezione "attraversi" il Controller senza essere bloccata, destinata ad essere gestita in totale trasparenza dal Middleware.  
+* **Client Resiliente:** L'app MAUI (tramite System.Text.Json puro) spacchetta in sicurezza il ProblemDetails JSON e restituisce all'utente un messaggio diagnostico pulito, evitando crash dell'applicazione.
+
+## **✨ Features Attuali (Log di Officina)**
+
+* **Sicurezza & Autenticazione:** Login e Registrazione gestiti tramite ASP.NET Core Identity API Endpoints. Token JWT immagazzinati tramite SecureStorage nativo.  
+* **Gestione Veicoli (CRUD Completo):**  
+  * Dashboard MVVM con lista veicoli tramite CollectionView.  
+  * Flusso d'inserimento nuova moto (VehicleDetailPage) protetto da JWT automatico.  
+  * Gestione e visualizzazione di errori server/strutturali (es. VIN duplicato) senza impattare l'esperienza utente.  
+* **Automazione HTTP:** Il client MAUI intercetta e inietta dinamicamente gli header di Autorizzazione (Bearer) in tutte le chiamate API grazie al VehicleService. È suddivisa in 6 progetti distinti:
 
 | Progetto | Responsabilità |
 |---|---|
