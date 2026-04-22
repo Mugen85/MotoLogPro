@@ -28,7 +28,16 @@ L'obiettivo tecnico è dimostrare l'applicazione di pattern architetturali avanz
 
 ![Dependency Diagram](./docs/dependencies.svg)
 
-La soluzione segue rigorosamente i principi della **Clean Architecture** per garantire la separazione delle responsabilità, la scalabilità e la testabilità. È suddivisa in 6 progetti distinti:  a 6 strati:
+La soluzione segue rigorosamente i principi della **Clean Architecture** per garantire la separazione delle responsabilità, la scalabilità e la testabilità. È suddivisa in 6 progetti distinti:
+
+| Progetto | Responsabilità |
+|---|---|
+| `MotoLogPro.Domain` | Entità (`Motorcycle`, `ApplicationUser`), interfacce e logica di business pura. Nessuna dipendenza esterna. |
+| `MotoLogPro.Shared` | DTO e contratti condivisi tra API e Client. |
+| `MotoLogPro.Infrastructure` | Accesso ai dati (EF Core), DbContext, migrazioni e implementazione dei service. |
+| `MotoLogPro.API` | Backend ASP.NET Core Web API. Endpoint REST, autenticazione JWT, error handling globale. |
+| `MotoLogPro.Client` | Frontend Cross-Platform in .NET MAUI. UI, MVVM, storage sicuro locale. |
+| `MotoLogPro.Tests` | Unit test (xUnit + Moq) e Integration test. |
 
 1. **Domain:** Entità core (Motorcycle, ApplicationUser) isolate e prive di dipendenze esterne.  
 2. **Shared:** DTOs (es. VehicleDto) condivisi tra Client e API per garantire type-safety assoluta.  
@@ -54,15 +63,6 @@ Durante lo sviluppo del flusso di aggiunta veicoli (CRUD), un test unitario sul 
   * Flusso d'inserimento nuova moto (VehicleDetailPage) protetto da JWT automatico.  
   * Gestione e visualizzazione di errori server/strutturali (es. VIN duplicato) senza impattare l'esperienza utente.  
 * **Automazione HTTP:** Il client MAUI intercetta e inietta dinamicamente gli header di Autorizzazione (Bearer) in tutte le chiamate API grazie al VehicleService. È suddivisa in 6 progetti distinti:
-
-| Progetto | Responsabilità |
-|---|---|
-| `MotoLogPro.Domain` | Entità (`Motorcycle`, `ApplicationUser`), interfacce e logica di business pura. Nessuna dipendenza esterna. |
-| `MotoLogPro.Shared` | DTO e contratti condivisi tra API e Client. |
-| `MotoLogPro.Infrastructure` | Accesso ai dati (EF Core), DbContext, migrazioni e implementazione dei service. |
-| `MotoLogPro.API` | Backend ASP.NET Core Web API. Endpoint REST, autenticazione JWT, error handling globale. |
-| `MotoLogPro.Client` | Frontend Cross-Platform in .NET MAUI. UI, MVVM, storage sicuro locale. |
-| `MotoLogPro.Tests` | Unit test (xUnit + Moq) e Integration test. |
 
 ---
 
