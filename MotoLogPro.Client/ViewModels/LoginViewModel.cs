@@ -49,7 +49,7 @@ namespace MotoLogPro.Client.ViewModels
             // 1. Validazione Input
             if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             {
-                await Shell.Current.DisplayAlert("Errore", "Inserisci email e password", "OK");
+                await Shell.Current.DisplayAlertAsync("Errore", "Inserisci email e password", "OK");
                 return;
             }
 
@@ -69,12 +69,12 @@ namespace MotoLogPro.Client.ViewModels
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Errore", "Credenziali non valide", "Riprova");
+                    await Shell.Current.DisplayAlertAsync("Errore", "Credenziali non valide", "Riprova");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Errore Tecnico", ex.Message, "OK");
+                await Shell.Current.DisplayAlertAsync("Errore Tecnico", ex.Message, "OK");
             }
             finally
             {

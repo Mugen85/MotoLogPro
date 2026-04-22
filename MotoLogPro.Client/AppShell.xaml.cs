@@ -4,6 +4,7 @@
     {
         public AppShell()
         {
+            Routing.RegisterRoute(nameof(Pages.VehicleDetailPage), typeof(Pages.VehicleDetailPage));
             InitializeComponent();
         }
     }

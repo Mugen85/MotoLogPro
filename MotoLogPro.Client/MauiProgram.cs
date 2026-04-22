@@ -59,6 +59,8 @@ namespace MotoLogPro.Client
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<DashboardPage>();
+            builder.Services.AddTransient<VehicleDetailViewModel>();
+            builder.Services.AddTransient<VehicleDetailPage>();
 
             return builder.Build();
         }

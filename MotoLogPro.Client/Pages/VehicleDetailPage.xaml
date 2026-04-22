@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MotoLogPro.Client.ViewModels"
+             x:Class="MotoLogPro.Client.Pages.VehicleDetailPage"
+             Title="Nuovo Veicolo">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
+
+            <Label Text="Dati della Moto" 
+                   FontSize="22" 
+                   FontAttributes="Bold" 
+                   TextColor="{StaticResource Primary}" 
+                   Margin="0,0,0,10"/>
+
+            <!-- MARCA -->
+            <Label Text="Marca" FontSize="14" TextColor="Gray" />
+            <Entry Text="{Binding Brand}" 
+                   Placeholder="es. Yamaha" 
+                   ClearButtonVisibility="WhileEditing" />
+
+            <!-- MODELLO -->
+            <Label Text="Modello" FontSize="14" TextColor="Gray" />
+            <Entry Text="{Binding Model}" 
+                   Placeholder="es. Ténéré 700" 
+                   ClearButtonVisibility="WhileEditing" />
+
+            <!-- ANNO -->
+            <Label Text="Anno di Immatricolazione" FontSize="14" TextColor="Gray" />
+            <Entry Text="{Binding Year}" 
+                   Placeholder="es. 2023" 
+                   Keyboard="Numeric" 
+                   MaxLength="4" />
+
+            <!-- TELAIO (VIN) -->
+            <Label Text="Numero di Telaio (VIN)" FontSize="14" TextColor="Gray" />
+            <Entry Text="{Binding Vin}" 
+                   Placeholder="17 caratteri" 
+                   MaxLength="17" 
+                   TextTransform="Uppercase"
+                   ClearButtonVisibility="WhileEditing" />
+
+            <!-- MESSAGGIO DI ERRORE -->
+            <Frame BackgroundColor="#ffebee" 
+                   BorderColor="Red" 
+                   CornerRadius="8" 
+                   Padding="10" 
+                   Margin="0,10,0,0"
+                   IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" 
+                       TextColor="Red" 
+                       HorizontalTextAlignment="Center" 
+                       FontAttributes="Bold"/>
+            </Frame>
+
+            <!-- INDICATORE DI CARICAMENTO -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                               IsVisible="{Binding IsBusy}" 
+                               Color="{StaticResource Primary}" 
+                               HorizontalOptions="Center" 
+                               Margin="0,10,0,0"/>
+
+            <!-- BOTTONE SALVA MASSICCIO -->
+            <Button Text="SALVA MOTO NEL GARAGE" 
+                    Command="{Binding SaveCommand}" 
+                    Margin="0,20,0,0" 
+                    HeightRequest="60" 
+                    CornerRadius="10"
+                    FontAttributes="Bold" 
+                    FontSize="16"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

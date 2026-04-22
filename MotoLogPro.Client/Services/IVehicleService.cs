@@ -4,6 +4,16 @@ namespace MotoLogPro.Client.Services
 {
     public interface IVehicleService
     {
-        Task<List<VehicleDto>> GetVehiclesAsync();
+        // Lettura
+        Task<IEnumerable<VehicleDto>> GetVehiclesAsync();
+
+        // Creazione
+        Task<VehicleDto?> CreateVehicleAsync(CreateMotorcycleDto dto);
+
+        // Modifica
+        Task<bool> UpdateVehicleAsync(int id, CreateMotorcycleDto dto);
+
+        // Cancellazione
+        Task<bool> DeleteVehicleAsync(int id);
     }
 }

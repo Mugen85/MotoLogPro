@@ -19,14 +19,13 @@ namespace MotoLogPro.Client.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotBusy))]
         [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
-        bool isBusy;
+        private bool isBusy;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
-        bool hasError;
-
+        private bool hasError;
         [ObservableProperty]
-        string errorMessage = string.Empty;
+        private string errorMessage = string.Empty;
 
         public bool IsNotBusy => !IsBusy;
 
@@ -75,6 +74,13 @@ namespace MotoLogPro.Client.ViewModels
         {
             await _authService.LogoutAsync();
             await Shell.Current.GoToAsync("//LoginPage");
+        }
+
+        [RelayCommand]
+        async Task AddNewVehicle()
+        {
+            // Naviga verso la pagina di dettaglio
+            await Shell.Current.GoToAsync(nameof(Pages.VehicleDetailPage));
         }
     }
 }

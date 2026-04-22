@@ -9,7 +9,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Esci"      Command="{Binding LogoutCommand}"   Order="Primary" Priority="1" />
-        <ToolbarItem Text="Nuova Moto" Order="Primary" Priority="0" />
+        <ToolbarItem Text="Nuova Moto" Command="{Binding AddNewVehicleCommand}" Order="Primary" Priority="0" />
     </ContentPage.ToolbarItems>
 
     <Grid RowDefinitions="Auto, *">

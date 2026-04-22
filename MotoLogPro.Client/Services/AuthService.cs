@@ -106,5 +106,11 @@ namespace MotoLogPro.Client.Services
             var token = await SecureStorage.GetAsync("auth_token");
             return !string.IsNullOrEmpty(token);
         }
+
+        public async Task<string?> GetTokenAsync()
+        {
+            // Recuperiamo il token in modo sicuro.           
+            return await SecureStorage.Default.GetAsync("auth_token");
+        }
     }
 }

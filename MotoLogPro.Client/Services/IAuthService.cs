@@ -7,5 +7,7 @@
         Task LogoutAsync();
         Task<bool> IsUserLoggedIn();
         Task<bool> RefreshTokenAsync();
+        // Aggiungiamo la firma per recuperare il token
+        Task<string?> GetTokenAsync();
     }
 }
