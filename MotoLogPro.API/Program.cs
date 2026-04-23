@@ -5,6 +5,7 @@ using MotoLogPro.Domain.Entities;
 using MotoLogPro.Domain.Interfaces;
 using MotoLogPro.Infrastructure.Data;
 using MotoLogPro.Infrastructure.Services;
+using MotoLogPro.Shared.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         b => b.MigrationsAssembly("MotoLogPro.Infrastructure")));
 
 builder.Services.AddScoped<IMotorcycleService, MotorcycleService>();
+builder.Services.AddScoped<ICatalogService, CatalogService>();
 
 // --- 2. AUTH ---
 builder.Services.AddAuthorization();
