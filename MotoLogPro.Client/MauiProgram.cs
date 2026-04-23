@@ -54,6 +54,11 @@ namespace MotoLogPro.Client
                 return handler;
             });
 
+            builder.Services.AddHttpClient<ICatalogService, CatalogService>(client =>
+            {
+                client.BaseAddress = new Uri(apiUrl); // Assicurati di usare la tua porta API
+            });
+
             // Pagine e ViewModel
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<LoginViewModel>();

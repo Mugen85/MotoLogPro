@@ -1,5 +1,6 @@
 ﻿using MotoLogPro.Client.Services;
 using MotoLogPro.Shared.DTOs;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -9,10 +10,11 @@ namespace MotoLogPro.Client.ViewModels
     public class VehicleDetailViewModel : INotifyPropertyChanged
     {
         private readonly IVehicleService _vehicleService;
+        private readonly Services.ICatalogService _catalogService;
 
-        private string _brand = string.Empty;
-        private string _model = string.Empty;
-        private string _year = string.Empty; // Uso stringa per facilitare l'input dell'utente
+        private BrandDto? _selectedBrand;
+        private BikeModelDto? _selectedModel;
+        private string _year = string.Empty;
         private string _vin = string.Empty;
 
         private string _errorMessage = string.Empty;
@@ -20,27 +22,47 @@ namespace MotoLogPro.Client.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public VehicleDetailViewModel(IVehicleService vehicleService)
+        public ObservableCollection<BrandDto> Brands { get; } = new();
+        public ObservableCollection<BikeModelDto> Models { get; } = new();
+
+        public VehicleDetailViewModel(IVehicleService vehicleService, Services.ICatalogService catalogService)
         {
             _vehicleService = vehicleService;
+            _catalogService = catalogService;
             SaveCommand = new Command(async () => await SaveAsync(), () => !IsBusy);
+
+            // Carichiamo le marche appena il ViewModel viene istanziato
+            _ = LoadBrandsAsync();
         }
 
         public ICommand SaveCommand { get; }
 
-        // --- Proprietà di Binding ---
+        // --- Proprietà a Cascata ---
 
-        public string Brand
+        public BrandDto? SelectedBrand
         {
-            get => _brand;
-            set { _brand = value; OnPropertyChanged(); }
+            get => _selectedBrand;
+            set
+            {
+                if (_selectedBrand != value)
+                {
+                    _selectedBrand = value;
+                    OnPropertyChanged();
+
+                    // Se l'utente cambia marca, azzeriamo il modello e ricarichiamo la lista
+                    SelectedModel = null;
+                    _ = LoadModelsAsync();
+                }
+            }
         }
 
-        public string Model
+        public BikeModelDto? SelectedModel
         {
-            get => _model;
-            set { _model = value; OnPropertyChanged(); }
+            get => _selectedModel;
+            set { _selectedModel = value; OnPropertyChanged(); }
         }
+
+        // --- Altre Proprietà ---
 
         public string Year
         {
@@ -74,20 +96,70 @@ namespace MotoLogPro.Client.ViewModels
             {
                 _isBusy = value;
                 OnPropertyChanged();
-                ((Command)SaveCommand).ChangeCanExecute(); // Disabilita il bottone mentre salva
+                ((Command)SaveCommand).ChangeCanExecute();
             }
         }
 
-        // --- Logica di Salvataggio ---
+        // --- Logica Dati ---
+
+        private async Task LoadBrandsAsync()
+        {
+            IsBusy = true;
+            try
+            {
+                var brands = await _catalogService.GetBrandsAsync();
+                Brands.Clear();
+                foreach (var brand in brands)
+                {
+                    Brands.Add(brand);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Impossibile caricare le marche.";
+                System.Diagnostics.Debug.WriteLine($"Errore: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task LoadModelsAsync()
+        {
+            if (SelectedBrand == null)
+            {
+                Models.Clear();
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var models = await _catalogService.GetModelsByBrandAsync(SelectedBrand.Id);
+                Models.Clear();
+                foreach (var model in models)
+                {
+                    Models.Add(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Impossibile caricare i modelli.";
+                System.Diagnostics.Debug.WriteLine($"Errore: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
 
         private async Task SaveAsync()
         {
             if (IsBusy) return;
-
             ErrorMessage = string.Empty;
 
-            // 1. Validazione base da officina (non facciamo i pignoli, ma le basi servono)
-            if (string.IsNullOrWhiteSpace(Brand) || string.IsNullOrWhiteSpace(Model) || string.IsNullOrWhiteSpace(Vin))
+            if (SelectedBrand == null || SelectedModel == null || string.IsNullOrWhiteSpace(Vin))
             {
                 ErrorMessage = "Marca, Modello e Telaio (VIN) sono obbligatori.";
                 return;
@@ -105,24 +177,21 @@ namespace MotoLogPro.Client.ViewModels
             {
                 var dto = new CreateMotorcycleDto
                 {
-                    Brand = this.Brand.Trim(),
-                    Model = this.Model.Trim(),
+                    Brand = SelectedBrand.Name, // Preleviamo il nome dall'oggetto selezionato!
+                    Model = SelectedModel.Name,
                     Year = yearParsed,
-                    Vin = this.Vin.Trim().ToUpper() // Il telaio si salva sempre in maiuscolo
+                    Vin = this.Vin.Trim().ToUpper()
                 };
 
-                // Chiamata all'API tramite il nostro "cavo dell'acceleratore"
                 var result = await _vehicleService.CreateVehicleAsync(dto);
 
                 if (result != null)
                 {
-                    // Successo! Chiudiamo la pagina e torniamo indietro
                     await Shell.Current.GoToAsync("..");
                 }
             }
             catch (Exception ex)
             {
-                // Qui peschiamo esattamente il messaggio del 409 Conflict ("Il VIN inserito è già presente...")
                 ErrorMessage = ex.Message;
             }
             finally

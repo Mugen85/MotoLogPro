@@ -14,17 +14,20 @@
                    TextColor="{StaticResource Primary}" 
                    Margin="0,0,0,10"/>
 
-            <!-- MARCA -->
+            <!-- MARCA (PICKER) -->
             <Label Text="Marca" FontSize="14" TextColor="Gray" />
-            <Entry Text="{Binding Brand}" 
-                   Placeholder="es. Yamaha" 
-                   ClearButtonVisibility="WhileEditing" />
+            <Picker Title="Seleziona la marca"
+                    ItemsSource="{Binding Brands}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedBrand}" />
 
-            <!-- MODELLO -->
+            <!-- MODELLO (PICKER) -->
             <Label Text="Modello" FontSize="14" TextColor="Gray" />
-            <Entry Text="{Binding Model}" 
-                   Placeholder="es. Ténéré 700" 
-                   ClearButtonVisibility="WhileEditing" />
+            <Picker Title="Seleziona il modello"
+                    ItemsSource="{Binding Models}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedModel}"
+                    IsEnabled="{Binding SelectedBrand, Converter={x:Static ObjectToBoolConverter}}" />
 
             <!-- ANNO -->
             <Label Text="Anno di Immatricolazione" FontSize="14" TextColor="Gray" />
