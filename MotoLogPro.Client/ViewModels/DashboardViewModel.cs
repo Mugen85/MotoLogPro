@@ -82,5 +82,49 @@ namespace MotoLogPro.Client.ViewModels
             // Naviga verso la pagina di dettaglio
             await Shell.Current.GoToAsync(nameof(Pages.VehicleDetailPage));
         }
+
+        [RelayCommand]
+        private async Task DeleteMotorcycleAsync(VehicleDto? moto)
+        {
+            // 1. FAIL-FAST & KISS: Se il binding dello XAML ha fallito o l'ID è invalido, 
+            // usciamo all'istante. Niente eccezioni che fanno esplodere l'app, semplicemente non facciamo nulla.
+            if (moto is null || moto.Id <= 0)
+                return;
+
+            // 2. Da qui in poi sappiamo che "moto" è valida. Procediamo col flusso UI.
+            bool confirm = await Shell.Current.DisplayAlertAsync(
+                "Rottamazione",
+                $"Sei sicuro di voler eliminare la {moto.Brand} {moto.Model}?",
+                "Elimina", "Annulla");
+
+            if (!confirm)
+                return; // Altro Fail-Fast/Early Return: l'utente ha annullato, usciamo subito.
+
+            // 3. Optimistic UI Update (Feedback immediato)
+            int originalIndex = Vehicles.IndexOf(moto);
+            Vehicles.Remove(moto);
+            OnPropertyChanged(nameof(ShowEmptyState));
+
+            try
+            {
+                // 4. Chiamata di rete
+                var success = await _vehicleService.DeleteVehicleAsync(moto.Id);
+
+                if (!success)
+                {
+                    // Rollback
+                    Vehicles.Insert(originalIndex, moto);
+                    OnPropertyChanged(nameof(ShowEmptyState));
+                    await Shell.Current.DisplayAlertAsync("Errore", "Impossibile eliminare il veicolo dal server. Riprova.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Rollback
+                Vehicles.Insert(originalIndex, moto);
+                OnPropertyChanged(nameof(ShowEmptyState));
+                await Shell.Current.DisplayAlertAsync("Errore", $"Errore di comunicazione: {ex.Message}", "OK");
+            }
+        }
     }
 }
