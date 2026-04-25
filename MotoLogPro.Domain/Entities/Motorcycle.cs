@@ -31,5 +31,7 @@ namespace MotoLogPro.Domain.Entities
         public virtual ApplicationUser? User { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public bool IsDeleted { get; set; } = false;
     }
 }

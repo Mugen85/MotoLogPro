@@ -67,6 +67,10 @@ namespace MotoLogPro.Infrastructure.Data
                     new BikeModel { Id = 11, Name = "1290 Super Adventure", BrandId = 5 },
                     new BikeModel { Id = 12, Name = "890 Duke", BrandId = 5 });
             });
+
+            // --- 3. GLOBAL QUERY FILTERS ---
+            // Entity Framework filtrerà in automatico tutte le moto "cancellate logicamente"
+            builder.Entity<Motorcycle>().HasQueryFilter(m => !m.IsDeleted);
         }      
             
     }

@@ -76,10 +76,14 @@ namespace MotoLogPro.Infrastructure.Services
             var moto = await _context.Motorcycles
                 .FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId);
 
-            if (moto is null) return false;
+            if (moto == null) return false;
 
-            _context.Motorcycles.Remove(moto);
+            // SOFT DELETE: Invece di distruggere il record, lo marchiamo come cancellato
+            moto.IsDeleted = true;
+
+            _context.Motorcycles.Update(moto);
             await _context.SaveChangesAsync();
+
             return true;
         }
     }
