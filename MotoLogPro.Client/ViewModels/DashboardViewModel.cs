@@ -126,5 +126,19 @@ namespace MotoLogPro.Client.ViewModels
                 await Shell.Current.DisplayAlertAsync("Errore", $"Errore di comunicazione: {ex.Message}", "OK");
             }
         }
+
+        [RelayCommand]
+        private async Task EditMotorcycleAsync(VehicleDto moto)
+        {
+            if (moto is null) return;
+
+            // Passiamo la moto selezionata alla pagina di dettaglio tramite il dizionario di navigazione
+            var navigationParameter = new Dictionary<string, object>
+    {
+        { "VehicleToEdit", moto }
+    };
+
+            await Shell.Current.GoToAsync(nameof(Pages.VehicleDetailPage), navigationParameter);
+        }
     }
 }

@@ -17,7 +17,6 @@ namespace MotoLogPro.Client
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
@@ -26,38 +25,37 @@ namespace MotoLogPro.Client
                 ? "https://10.0.2.2:7035"
                 : "https://localhost:7035";
 
-            // AuthService — con SSL bypass per sviluppo
+            // DRY: Definiamo il bypass SSL una sola volta per tutto l'impianto
+            HttpMessageHandler GetInsecureHandler()
+            {
+                var handler = new HttpClientHandler();
+#if DEBUG
+                // In sviluppo, accettiamo qualsiasi certificato (Bypass)
+                handler.ServerCertificateCustomValidationCallback = (m, c, ch, e) => true;
+#endif
+                return handler;
+            }
+
+            // AuthService
             builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
             {
                 client.BaseAddress = new Uri(apiUrl);
             })
-            .ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                var handler = new HttpClientHandler();
-#if DEBUG
-                handler.ServerCertificateCustomValidationCallback = (m, c, ch, e) => true;
-#endif
-                return handler;
-            });
+            .ConfigurePrimaryHttpMessageHandler(GetInsecureHandler);
 
-            // VehicleService — con SSL bypass per sviluppo
+            // VehicleService
             builder.Services.AddHttpClient<IVehicleService, VehicleService>(client =>
             {
                 client.BaseAddress = new Uri(apiUrl);
             })
-            .ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                var handler = new HttpClientHandler();
-#if DEBUG
-                handler.ServerCertificateCustomValidationCallback = (m, c, ch, e) => true;
-#endif
-                return handler;
-            });
+            .ConfigurePrimaryHttpMessageHandler(GetInsecureHandler);
 
+            // CatalogService - SPINOTTO RIATTACCATO
             builder.Services.AddHttpClient<ICatalogService, CatalogService>(client =>
             {
-                client.BaseAddress = new Uri(apiUrl); // Assicurati di usare la tua porta API
-            });
+                client.BaseAddress = new Uri(apiUrl);
+            })
+            .ConfigurePrimaryHttpMessageHandler(GetInsecureHandler);
 
             // Pagine e ViewModel
             builder.Services.AddTransient<LoginPage>();

@@ -55,13 +55,18 @@ public partial class VehicleDetailViewModel : ObservableObject
         try
         {
             var brands = await _catalogService.GetBrandsAsync();
-            Brands.Clear();
-            foreach (var brand in brands) Brands.Add(brand);
+
+            // BLOCCO SICUREZZA ANDROID: Le modifiche alla UI vanno sul Main Thread
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Brands.Clear();
+                foreach (var brand in brands) Brands.Add(brand);
+            });
         }
         catch (Exception ex)
         {
             ErrorMessage = "Impossibile caricare le marche.";
-            System.Diagnostics.Debug.WriteLine($"Errore: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[ERRORE API Catalog]: {ex.Message}");
         }
         finally
         {
@@ -69,17 +74,24 @@ public partial class VehicleDetailViewModel : ObservableObject
         }
     }
 
-    // --- Logica a Cascata ---
-
+    // --- L'INTERRUTTORE MANCANTE ---
     partial void OnSelectedBrandChanged(BrandDto? value)
     {
-        Models.Clear();
-        SelectedModel = null;
+        // Se la marca viene deselezionata, puliamo i modelli
+        if (value is null)
+        {
+            Models.Clear();
+            SelectedModel = null;
+            return;
+        }
 
-        if (value is null) return;
+        System.Diagnostics.Debug.WriteLine($"[DIAGNOSTICA] Hai selezionato la marca: {value.Name} (ID: {value.Id})");
 
+        // Lanciamo il caricamento dei modelli
         _ = LoadModelsForBrandAsync(value.Id);
     }
+
+    // --- Logica a Cascata ---
 
     private async Task LoadModelsForBrandAsync(int brandId)
     {
@@ -87,13 +99,18 @@ public partial class VehicleDetailViewModel : ObservableObject
         try
         {
             var models = await _catalogService.GetModelsByBrandAsync(brandId);
-            Models.Clear();
-            foreach (var model in models) Models.Add(model);
+
+            // BLOCCO SICUREZZA ANDROID: Le modifiche alla UI vanno sul Main Thread
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Models.Clear();
+                foreach (var model in models) Models.Add(model);
+            });
         }
         catch (Exception ex)
         {
             ErrorMessage = "Impossibile caricare i modelli.";
-            System.Diagnostics.Debug.WriteLine($"Errore: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[ERRORE API Catalog]: {ex.Message}");
         }
         finally
         {

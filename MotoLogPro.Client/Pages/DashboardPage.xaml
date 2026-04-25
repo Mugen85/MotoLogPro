@@ -8,19 +8,17 @@
              BackgroundColor="#F5F5F5">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Esci"      Command="{Binding LogoutCommand}"   Order="Primary" Priority="1" />
+        <ToolbarItem Text="Esci"       Command="{Binding LogoutCommand}"   Order="Primary" Priority="1" />
         <ToolbarItem Text="Nuova Moto" Command="{Binding AddNewVehicleCommand}" Order="Primary" Priority="0" />
     </ContentPage.ToolbarItems>
 
     <Grid RowDefinitions="Auto, *">
 
-        <!-- Header -->
         <VerticalStackLayout Grid.Row="0" BackgroundColor="#2196F3" Padding="20">
             <Label Text="Benvenuto in MotoLogPro" TextColor="White"  FontSize="18" FontAttributes="Bold"/>
             <Label Text="Seleziona un veicolo per iniziare" TextColor="#E3F2FD" FontSize="14"/>
         </VerticalStackLayout>
 
-        <!-- Loading -->
         <ActivityIndicator Grid.Row="1"
                            IsRunning="{Binding IsBusy}"
                            IsVisible="{Binding IsBusy}"
@@ -28,7 +26,6 @@
                            HorizontalOptions="Center"
                            VerticalOptions="Center"/>
 
-        <!-- Stato di errore -->
         <VerticalStackLayout Grid.Row="1"
                              IsVisible="{Binding HasError}"
                              HorizontalOptions="Center"
@@ -49,7 +46,6 @@
                     HorizontalOptions="Center"/>
         </VerticalStackLayout>
 
-        <!-- Lista veicoli -->
         <CollectionView Grid.Row="1"
                         ItemsSource="{Binding Vehicles}"
                         Margin="10"
@@ -64,31 +60,60 @@
 
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:VehicleDto">
-                    <Border StrokeShape="RoundRectangle 15"
-                            StrokeThickness="0"
-                            BackgroundColor="White"
-                            Padding="0"
-                            HeightRequest="160">
-                        <Border.Shadow>
-                            <Shadow Brush="Black" Offset="2,2" Radius="5" Opacity="0.1"/>
-                        </Border.Shadow>
-                        <Grid RowDefinitions="*, Auto" ColumnDefinitions="Auto, *">
-                            <BoxView Grid.RowSpan="2" Grid.Column="0" WidthRequest="10" Color="#2196F3"/>
-                            <VerticalStackLayout Grid.Column="1" Grid.Row="0" Padding="15" Spacing="5">
-                                <Label Text="{Binding Brand}"        TextColor="#757575" FontSize="12" TextTransform="Uppercase"/>
-                                <Label Text="{Binding Model}"        TextColor="#212121" FontSize="20" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
-                                <Label Text="{Binding LicensePlate}" TextColor="#424242" FontSize="16" FontAttributes="Bold"/>
-                            </VerticalStackLayout>
-                            <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*, Auto" Padding="15,0,15,10">
-                                <Label Grid.Column="0" Text="{Binding OwnerName}" TextColor="#9E9E9E" FontSize="12" VerticalOptions="End"/>
-                                <Label Grid.Column="1" Text="{Binding Year}"      TextColor="#2196F3" FontAttributes="Bold" FontSize="18" VerticalOptions="End"/>
+
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Modifica" 
+                                           BackgroundColor="#FFB300"
+                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DashboardViewModel}}, Path=EditMotorcycleCommand}"
+                                           CommandParameter="{Binding .}" />
+                                <SwipeItem Text="Elimina" 
+                                           BackgroundColor="#D32F2F"
+                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DashboardViewModel}}, Path=DeleteMotorcycleCommand}"
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Border StrokeShape="RoundRectangle 15"
+                                StrokeThickness="0"
+                                BackgroundColor="White"
+                                Padding="0"
+                                HeightRequest="160">
+
+                            <FlyoutBase.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="Modifica" 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DashboardViewModel}}, Path=EditMotorcycleCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                    <MenuFlyoutItem Text="Elimina" 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DashboardViewModel}}, Path=DeleteMotorcycleCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                </MenuFlyout>
+                            </FlyoutBase.ContextFlyout>
+
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Offset="2,2" Radius="5" Opacity="0.1"/>
+                            </Border.Shadow>
+
+                            <Grid RowDefinitions="*, Auto" ColumnDefinitions="Auto, *">
+                                <BoxView Grid.RowSpan="2" Grid.Column="0" WidthRequest="10" Color="#2196F3"/>
+                                <VerticalStackLayout Grid.Column="1" Grid.Row="0" Padding="15,15,15,5" Spacing="2">
+                                    <Label Text="{Binding Brand}"        TextColor="#757575" FontSize="12" TextTransform="Uppercase"/>
+                                    <Label Text="{Binding Model}"        TextColor="#212121" FontSize="20" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding Vin}"          TextColor="#9E9E9E" FontSize="12" FontFamily="Consolas" Margin="0,5,0,0"/>
+                                </VerticalStackLayout>
+                                <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*, Auto" Padding="15,0,15,15">
+                                    <Label Grid.Column="0" Text="{Binding LicensePlate}" TextColor="#424242" FontSize="14" FontAttributes="Bold" VerticalOptions="End"/>
+                                    <Label Grid.Column="1" Text="{Binding Year}"         TextColor="#2196F3" FontAttributes="Bold" FontSize="18" VerticalOptions="End"/>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Border>
+                        </Border>
+                    </SwipeView>
+
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
-            <!-- Empty state: nessuna moto registrata -->
             <CollectionView.EmptyView>
                 <VerticalStackLayout IsVisible="{Binding ShowEmptyState}"
                                      HorizontalOptions="Center"
@@ -106,5 +131,4 @@
         </CollectionView>
 
     </Grid>
-
 </ContentPage>

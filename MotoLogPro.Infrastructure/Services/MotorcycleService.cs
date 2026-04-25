@@ -29,15 +29,58 @@ namespace MotoLogPro.Infrastructure.Services
 
         public async Task<VehicleDto> CreateAsync(string userId, CreateMotorcycleDto dto)
         {
+            // FAIL-FAST: Le sentinelle all'ingresso.
+            ArgumentException.ThrowIfNullOrWhiteSpace(userId);
+            ArgumentNullException.ThrowIfNull(dto);
+
+            // 1. CONTROLLO GLOBALE: Diciamo a EF Core di guardare anche sotto i teloni (tra le moto cancellate)
+            var existingMoto = await _context.Motorcycles
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(m => m.Vin == dto.Vin && m.UserId == userId);
+
+            if (existingMoto != null)
+            {
+                if (existingMoto.IsDeleted)
+                {
+                    // SCENARIO REALE: La moto era cancellata ma è tornata. La riattiviamo (Resurrezione).
+                    existingMoto.IsDeleted = false;
+                    existingMoto.Brand = dto.Brand;
+                    existingMoto.Model = dto.Model;
+                    existingMoto.Year = dto.Year;
+                    existingMoto.LicensePlate = dto.LicensePlate;
+                    // Nota: Non tocchiamo CreatedAt, così manteniamo la data originale del primo ingresso in officina!
+
+                    _context.Motorcycles.Update(existingMoto);
+                    await _context.SaveChangesAsync();
+
+                    return new VehicleDto
+                    {
+                        Id = existingMoto.Id,
+                        Brand = existingMoto.Brand,
+                        Model = existingMoto.Model,
+                        Year = existingMoto.Year,
+                        Vin = existingMoto.Vin,
+                        LicensePlate = existingMoto.LicensePlate
+                    };
+                }
+                else
+                {
+                    // SCENARIO ERRORE: L'utente sta provando a registrare un telaio che è già nel suo garage, visibile e attivo.
+                    throw new InvalidOperationException($"Una moto con Telaio {dto.Vin} è già presente e attiva nel garage.");
+                }
+            }
+
+            // 2. SCENARIO NORMALE: Nessuna traccia di questo telaio nel DB. È una moto totalmente nuova.
             var moto = new Motorcycle
             {
                 Brand = dto.Brand,
                 Model = dto.Model,
                 Year = dto.Year,
                 Vin = dto.Vin,
-                LicensePlate = dto.LicensePlate, // ← AGGIUNTO
+                LicensePlate = dto.LicensePlate,
                 UserId = userId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                IsDeleted = false
             };
 
             _context.Motorcycles.Add(moto);
@@ -50,7 +93,7 @@ namespace MotoLogPro.Infrastructure.Services
                 Model = moto.Model,
                 Year = moto.Year,
                 Vin = moto.Vin,
-                LicensePlate = moto.LicensePlate // ← AGGIUNTO
+                LicensePlate = moto.LicensePlate
             };
         }
 
