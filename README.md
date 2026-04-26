@@ -52,6 +52,46 @@ Durante lo sviluppo del flusso di aggiunta veicoli (CRUD), un test unitario sul 
 
 ---
 
+## 🏛️ Manifesto Architetturale & di Design
+
+Questo documento delinea i principi fondamentali di ingegneria del software applicati nello sviluppo di **MotoLogPro**, dimostrando un approccio Enterprise-ready alla costruzione di sistemi distribuiti.
+
+### 1. Clean Architecture & Separation of Concerns (SoC)
+
+Il sistema è diviso in layer rigorosi (Domain, Shared, Infrastructure, API, Client) applicando la **Regola della Dipendenza**.
+
+* **Il vantaggio:** Il livello di Dominio (`Motorcycle`, `ApplicationUser`) non ha dipendenze esterne. Le modifiche al database (EF Core) o all'interfaccia utente (MAUI) non impattano mai la logica di business core.
+
+### 2. Principi S.O.L.I.D.
+
+* **Single Responsibility Principle (SRP):** Nel Client, i ViewModel si occupano esclusivamente dello stato dell'interfaccia (Presentation Logic), delegando l'accesso ai dati e le chiamate di rete ai Service (`IVehicleService`, `ICatalogService`).
+* **Dependency Inversion Principle (DIP):** Moduli di alto livello dipendono da astrazioni. I ViewModel ricevono interfacce (es. `IVehicleService`) tramite Dependency Injection, garantendo un'altissima **Testabilità** (è possibile iniettare Mock isolati dalla rete).
+
+### 3. DRY (Don't Repeat Yourself)
+
+Massimizzazione del riutilizzo del codice sia lato backend che frontend.
+
+* **Esempio:** La pagina `VehicleDetailPage` in MAUI funge sia da schermata di "Creazione" che di "Modifica". Tramite l'uso dei `[QueryProperty]` e del data-binding, la UI e la logica si adattano dinamicamente alla presenza o meno di un parametro in ingresso, azzerando la duplicazione degli XAML.
+
+### 4. Fail-Fast & Guard Clauses
+
+Prevenzione degli errori alla radice (Fail-Fast) per evitare esecuzioni inutili, allocazione di memoria a vuoto e l'anti-pattern "Arrow Code" (codice annidato).
+
+* **Esempio:** Nel backend e nei comandi del client vengono usate le *Guard Clauses* (`ArgumentException.ThrowIfNullOrWhiteSpace`, `moto is null`). Se i parametri in ingresso non sono validi, il flusso si interrompe immediatamente alla riga 1, garantendo linearità e robustezza.
+
+### 5. KISS (Keep It Simple, Stupid) & YAGNI (You Aren't Gonna Need It)
+
+Architettura pragmatica, pensata per l'utente finale (un meccanico con le mani sporche), evitando l'*over-engineering*.
+
+* **Esempio:** L'implementazione di feedback visivi immediati (*Optimistic UI Updates*) per la cancellazione o modifica dei record, evitando architetture di caching distribuito inutilmente complesse per il contesto.
+
+### 6. Sicurezza e Resilienza
+
+* **Global Exception Handling:** Il backend implementa un Middleware globale che cattura le eccezioni non gestite (es. violazioni di vincoli DB), restituendo `ProblemDetails` RFC 7807, prevenendo crash del client.
+* **Soft Delete:** Applicazione della cancellazione logica (`IsDeleted`) e degli **EF Core Global Query Filters**. Questo preserva l'integrità referenziale dei dati storici (fatture, tagliandi) garantendo al contempo che i dati eliminati non vengano esposti per errore nelle query future.
+
+---
+
 ## ✨ Features Attuali (Log di Officina)
 
 * **Sicurezza & Autenticazione:** Login e Registrazione gestiti tramite ASP.NET Core Identity API Endpoints. Token JWT immagazzinati tramite SecureStorage nativo.
@@ -158,6 +198,11 @@ Se questo progetto ti è utile o ti ha ispirato, considera di offrirmi un caffè
 
 # 🏍️ MotoLogPro
 
+![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=for-the-badge&logo=dotnet)
+![MAUI](https://img.shields.io/badge/MAUI-Cross--Platform-blueviolet?style=for-the-badge&logo=dotnet)
+![C#](https://img.shields.io/badge/C%23-Latest-239120?style=for-the-badge&logo=c-sharp)
+![Status](https://img.shields.io/badge/Status-In%20Development-yellow?style=for-the-badge)
+
 > **"From the wrench to the compiler."**
 > An Enterprise-grade workshop management system built with .NET 10 and Clean Architecture.
 
@@ -196,6 +241,46 @@ While developing the add vehicle flow (CRUD), a Controller unit test failed when
 * **GlobalExceptionMiddleware:** Acting like a diagnostic control unit (ECU), a global middleware catches unhandled exceptions (e.g., DB uniqueness violations), decodes them, and returns a standard `ProblemDetails` JSON to the client (HTTP 409 Conflict).
 * **Architectural Testing:** The unit test was refactored to verify the architecture rather than hardcoded strings: the test ensures the exception "passes through" the Controller unblocked, intended to be handled seamlessly by the Middleware.
 * **Resilient Client:** The MAUI app (using pure `System.Text.Json`) safely unpacks the `ProblemDetails` JSON and returns a clean diagnostic message to the user, preventing application crashes.
+
+---
+
+## 🏛️ Architectural & Design Manifesto
+
+This document outlines the core software engineering principles applied in the development of **MotoLogPro**, demonstrating an Enterprise-ready approach to building distributed systems.
+
+### 1. Clean Architecture & Separation of Concerns (SoC)
+
+The system is divided into strict layers (Domain, Shared, Infrastructure, API, Client) applying the **Dependency Rule**.
+
+* **The advantage:** The Domain layer (`Motorcycle`, `ApplicationUser`) has no external dependencies. Changes to the database (EF Core) or the user interface (MAUI) never impact the core business logic.
+
+### 2. S.O.L.I.D. Principles
+
+* **Single Responsibility Principle (SRP):** On the Client, ViewModels exclusively manage interface state (Presentation Logic), delegating data access and network calls to Services (`IVehicleService`, `ICatalogService`).
+* **Dependency Inversion Principle (DIP):** High-level modules depend on abstractions. ViewModels receive interfaces (e.g., `IVehicleService`) via Dependency Injection, guaranteeing extremely high **Testability** (isolated Mocks can be injected without network dependencies).
+
+### 3. DRY (Don't Repeat Yourself)
+
+Maximizing code reuse on both the backend and the frontend.
+
+* **Example:** The `VehicleDetailPage` in MAUI serves as both a "Create" and an "Edit" screen. Through the use of `[QueryProperty]` and data-binding, the UI and logic adapt dynamically to the presence or absence of an input parameter, eliminating XAML duplication entirely.
+
+### 4. Fail-Fast & Guard Clauses
+
+Preventing errors at the root (Fail-Fast) to avoid unnecessary execution, wasted memory allocation, and the "Arrow Code" anti-pattern (deeply nested conditionals).
+
+* **Example:** Guard Clauses are used in both the backend and client commands (`ArgumentException.ThrowIfNullOrWhiteSpace`, `moto is null`). If input parameters are invalid, the flow stops immediately at line 1, ensuring linearity and robustness.
+
+### 5. KISS (Keep It Simple, Stupid) & YAGNI (You Aren't Gonna Need It)
+
+Pragmatic architecture, designed for the end user (a mechanic with greasy hands), avoiding *over-engineering*.
+
+* **Example:** Implementation of immediate visual feedback (*Optimistic UI Updates*) for record deletion or modification, avoiding unnecessarily complex distributed caching architectures for the given context.
+
+### 6. Security & Resilience
+
+* **Global Exception Handling:** The backend implements a global Middleware that catches unhandled exceptions (e.g., DB constraint violations), returning `ProblemDetails` RFC 7807, preventing client crashes.
+* **Soft Delete:** Implementation of logical deletion (`IsDeleted`) and **EF Core Global Query Filters**. This preserves the referential integrity of historical data (invoices, service records) while ensuring that deleted data is never accidentally exposed in future queries.
 
 ---
 
