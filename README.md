@@ -12,7 +12,15 @@
 
 ## 📱 Screenshots
 
-> *Screenshots coming soon — app currently in active development.*
+<div align="center">
+
+### 🎬 Demo — Flusso Completo
+![MotoLogPro Demo](./docs/screenshots/demo.gif)
+
+### 🔐 Login Screen
+![Login Screen](./docs/screenshots/login.png)
+
+</div>
 
 ---
 
@@ -205,6 +213,20 @@ Se questo progetto ti è utile o ti ha ispirato, considera di offrirmi un caffè
 
 > **"From the wrench to the compiler."**
 > An Enterprise-grade workshop management system built with .NET 10 and Clean Architecture.
+
+---
+
+## 📱 Screenshots
+
+<div align="center">
+
+### 🎬 Demo — Full Flow
+![MotoLogPro Demo](./docs/screenshots/demo.gif)
+
+### 🔐 Login Screen
+![Login Screen](./docs/screenshots/login.png)
+
+</div>
 
 ---
 
